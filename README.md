@@ -1,6 +1,6 @@
-#Risky Plumbers
+# Risky Plumbers
 
-##Question
+## Question
 
 Risk application:
 1. Listens on port 8080 for standard HTTP traffic (not HTTPS)
@@ -26,9 +26,3 @@ The endpoints should use standard HTTP response status codes. E.g.:
 200 OK for a successful GET to the /v1/risks/ or /v1/risks/<id> endpoints
 500 Internal Server Error for problem with the internal server; etc.
 You may use any Golang framework or library to assist in the creation of this app.
-Please include:
-Instructions via a README.md or README.adoc file including how to run your
-service and any tests you may have written.
-In a For-Reviewers.md file, include any notes, thoughts, etc. which you
-would
-like the interviewers to be aware of.

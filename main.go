@@ -1,18 +1,19 @@
-package risk
+package main
 
 import (
 	"context"
 	"encoding/json"
 	"flag"
 	"log"
+	"maps"
 	"net/http"
 	"os"
 	"os/signal"
+	"slices"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
 var validStates map[string]struct{} = map[string]struct{}{
@@ -59,19 +60,16 @@ func newRiskHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func listRiskHandler(w http.ResponseWriter, r *http.Request) {
+func listRisksHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	riskValues := []Risk{}
-	for _, risk := range riskValues {
-		riskValues = append(riskValues, risk)
-	}
+	riskValues := slices.Collect(maps.Values(risks))
 
 	json.NewEncoder(w).Encode(riskValues)
 }
 
-func detailRiskHandler(w http.ResponseWriter, r *http.Request) {
+func getRiskHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := uuid.Parse(vars["id"])
 	if err != nil {
@@ -89,20 +87,13 @@ func detailRiskHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	var wait time.Duration
-	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m")
+	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "the duration for which the server gracefully waits for existing connections to finish - e.g. 15s or 1m")
 	flag.Parse()
 	r := mux.NewRouter()
 
 	r.HandleFunc("/v1/risks", newRiskHandler).Methods("POST")
-	r.HandleFunc("/v1/risks", listRiskHandler).Methods("GET")
-	r.HandleFunc("/v1/risks/{id}", detailRiskHandler).Methods("GET")
-
-	r.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
-		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
-		httpSwagger.DeepLinking(true),
-		httpSwagger.DocExpansion("none"),
-		httpSwagger.DomID("swagger-ui"),
-	)).Methods(http.MethodGet)
+	r.HandleFunc("/v1/risks", listRisksHandler).Methods("GET")
+	r.HandleFunc("/v1/risks/{id}", getRiskHandler).Methods("GET")
 
 	srv := &http.Server{
 		Addr: "localhost:8080",
