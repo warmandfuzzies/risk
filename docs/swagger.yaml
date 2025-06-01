@@ -1,6 +1,11 @@
+components: {}
+externalDocs:
+  description: ""
+  url: ""
 info:
-  contact: {}
   title: Risks
   version: "1.0"
+openapi: 3.1.0
 paths: {}
-swagger: "2.0"
+servers:
+- url: http://localhost:8080

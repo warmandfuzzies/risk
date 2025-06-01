@@ -1,1 +1,10 @@
-{"swagger":"2.0","info":{"title":"Risks","contact":{},"version":"1.0"},"paths":{}}
+{
+    "components": {},
+    "info": {"title":"Risks","version":"1.0"},
+    "externalDocs": {"description":"","url":""},
+    "paths": {},
+    "openapi": "3.1.0",
+    "servers": [
+        {"url":"http://localhost:8080"}
+    ]
+}

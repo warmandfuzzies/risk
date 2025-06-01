@@ -15,6 +15,8 @@ import (
 	"slices"
 	"time"
 
+	_ "github.com/warmandfuzzies/risk/docs"
+
 	"github.com/google/uuid"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
