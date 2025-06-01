@@ -1,3 +1,6 @@
+// @title Risks
+// @version 1.0
+// @servers.url http://localhost:8080
 package main
 
 import (
@@ -13,7 +16,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
 var validStates map[string]struct{} = map[string]struct{}{
@@ -70,8 +73,8 @@ func listRisksHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getRiskHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := uuid.Parse(vars["id"])
+	idStr := r.PathValue("id")
+	id, err := uuid.Parse(idStr)
 	if err != nil {
 		http.Error(w, "ID provided is not a valid UUID.", http.StatusBadRequest)
 		return
@@ -89,11 +92,13 @@ func main() {
 	var wait time.Duration
 	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "the duration for which the server gracefully waits for existing connections to finish - e.g. 15s or 1m")
 	flag.Parse()
-	r := mux.NewRouter()
+	r := http.NewServeMux()
 
-	r.HandleFunc("/v1/risks", newRiskHandler).Methods("POST")
-	r.HandleFunc("/v1/risks", listRisksHandler).Methods("GET")
-	r.HandleFunc("/v1/risks/{id}", getRiskHandler).Methods("GET")
+	r.Handle("GET /swagger/", httpSwagger.WrapHandler)
+
+	r.HandleFunc("POST /v1/risks", newRiskHandler)
+	r.HandleFunc("GET /v1/risks", listRisksHandler)
+	r.HandleFunc("GET /v1/risks/{id}", getRiskHandler)
 
 	srv := &http.Server{
 		Addr: "localhost:8080",
